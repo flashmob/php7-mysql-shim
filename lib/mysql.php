@@ -29,6 +29,12 @@ namespace {
             if (null === $password) {
                 $password = ini_get('mysqli.default_pw') ?: null;
             }
+            $socket = '';
+            if (strpos($hostname, ':/') == 0) {
+                // it's a unix socket
+                $socket = $hostname;
+                $hostname = 'localhost';
+            }
 
             $hash = sha1($hostname . $username . $flags);
             if ($hostname{1} != ':' && isset(\Dshafik\MySQL::$connections[$hash])) {
@@ -55,7 +61,7 @@ namespace {
                     $password,
                     '',
                     null,
-                    '',
+                    $socket,
                     $flags
                 );
 
